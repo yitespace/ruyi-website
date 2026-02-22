@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <title>欢迎来到如意的世界 ✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        /* 漂浮粒子背景 - 移动端优化 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+            will-change: transform;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 主容器 */
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* 头部 - 移动端简化 */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(45deg, #fff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn span {
+            width: 20px;
+            height: 2px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* 移动端导航菜单 */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 999;
+            padding: 80px 30px;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav ul {
+            list-style: none;
+        }
+
+        .mobile-nav li {
+            margin-bottom: 25px;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.4s ease;
+        }
+
+        .mobile-nav.active li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .mobile-nav li:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-nav li:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-nav li:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-nav li:nth-child(4) { transition-delay: 0.4s; }
+
+        .mobile-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 22px;
+            font-weight: 500;
+            padding: 15px 20px;
+            border-radius: 12px;
+            display: block;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav a:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.98);
+        }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 英雄区域 - 移动端优化 */
+        .hero {
+            text-align: center;
+            padding: 40px 20px 60px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .avatar-container {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 25px;
+            position: relative;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b9d, #c44569, #f093fb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+            animation: pulse 2s infinite;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+            }
+            50% {
+                box-shadow: 0 8px 45px rgba(255, 107, 157, 0.5);
+            }
+        }
+
+        .avatar-ring {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            line-height: 1.3;
+        }
+
+        .hero p {
+            font-size: 16px;
+            max-width: 400px;
+            margin: 0 auto 30px;
+            opacity: 0.95;
+            padding: 0 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 35px;
+            background: linear-gradient(45deg, #ff6b9d, #f093fb);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.4);
+            border: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 3px 15px rgba(255, 107, 157, 0.4);
+        }
+
+        /* 关于我区域 */
+        .section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 35px 20px;
+            margin: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b9d, #f093fb);
+            margin: 12px auto 0;
+            border-radius: 2px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .about-card {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 25px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .about-card:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .about-card h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .about-card p {
+            line-height: 1.7;
+            opacity: 0.95;
+            font-size: 15px;
+        }
+
+        /* 兴趣爱好 - 横向滚动 */
+        .hobbies-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 0;
+            margin: 20px -20px 0;
+        }
+
+        .hobbies {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px;
+            scrollbar-width: none;
+        }
+
+        .hobbies::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hobby-tag {
+            background: linear-gradient(45deg, #ff6b9d, #f093fb);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            box-shadow: 0 3px 15px rgba(255, 107, 157, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .hobby-tag:active {
+            transform: scale(0.95);
+        }
+
+        /* 联系方式 */
+        .contact {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .contact p {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 25px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            -webkit-appearance: none;
+        }
+
+        .social-link:active {
+            background: linear-gradient(45deg, #ff6b9d, #f093fb);
+            transform: scale(0.9);
+            border-color: transparent;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 25px 20px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 20px 20px 0 0;
+            margin-top: 30px;
+        }
+
+        footer p {
+            opacity: 0.85;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* 底部导航栏 - 移动端特色 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 50px;
+            padding: 10px 25px;
+            display: flex;
+            gap: 30px;
+            z-index: 100;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .bottom-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 22px;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .bottom-nav a:active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0.9);
+        }
+
+        .bottom-nav a.active {
+            background: linear-gradient(45deg, #ff6b9d, #f093fb);
+            box-shadow: 0 3px 15px rgba(255, 107, 157, 0.5);
+        }
+
+        /* 回到顶部按钮 */
+        .back-to-top {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b9d, #f093fb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(255, 107, 157, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 99;
+            border: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:active {
+            transform: scale(0.9);
+        }
+
+        /* PC端适配 */
+        @media (min-width: 768px) {
+            .container {
+                max-width: 900px;
+                padding: 30px;
+            }
+
+            header {
+                padding: 20px 30px;
+                margin-bottom: 30px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .menu-btn {
+                display: none;
+            }
+
+            .mobile-nav,
+            .nav-overlay,
+            .bottom-nav {
+                display: none;
+            }
+
+            .desktop-nav {
+                display: flex;
+                gap: 25px;
+            }
+
+            .desktop-nav a {
+                color: #fff;
+                text-decoration: none;
+                font-size: 16px;
+                padding: 10px 20px;
+                border-radius: 25px;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            .desktop-nav a:active {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .hero {
+                padding: 60px 40px 80px;
+            }
+
+            .avatar-container {
+                width: 180px;
+                height: 180px;
+            }
+
+            .avatar {
+                font-size: 80px;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .about-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .hobbies-container {
+                overflow-x: visible;
+                margin: 20px 0 0;
+            }
+
+            .hobbies {
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 0;
+            }
+
+            .back-to-top {
+                right: 40px;
+                bottom: 120px;
+            }
+        }
+
+        /* 安全区域适配 - iPhone X+ */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .bottom-nav {
+                bottom: calc(20px + env(safe-area-inset-bottom));
+            }
+            .back-to-top {
+                bottom: calc(90px + env(safe-area-inset-bottom));
+            }
+            footer {
+                padding-bottom: calc(25px + env(safe-area-inset-bottom));
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea, #764ba2, #f093fb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 漂浮粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 导航遮罩 -->
+    <div class="nav-overlay" id="navOverlay"></div>
+
+    <!-- 侧边导航 -->
+    <nav class="mobile-nav" id="mobileNav">
+        <ul>
+            <li><a href="#home" class="nav-link">🏠 首页</a></li>
+            <li><a href="#about" class="nav-link">💕 关于我</a></li>
+            <li><a href="#hobbies" class="nav-link">🎨 兴趣</a></li>
+            <li><a href="#contact" class="nav-link">💌 联系</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header>
+            <div class="logo">✨ 如意的世界</div>
+            <button class="menu-btn" id="menuBtn" aria-label="菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav class="desktop-nav" style="display: none;">
+                <a href="#home">首页</a>
+                <a href="#about">关于我</a>
+                <a href="#hobbies">兴趣</a>
+                <a href="#contact">联系</a>
+            </nav>
+        </header>
+
+        <!-- 英雄区域 -->
+        <section class="hero" id="home">
+            <div class="avatar-container">
+                <div class="avatar-ring"></div>
+                <div class="avatar">👸</div>
+            </div>
+            <h1>欢迎来到<br>我的世界 🌸</h1>
+            <p>你好呀！我是如意，一个热爱生活、充满好奇心的女孩。这里是我分享生活的小天地～</p>
+            <button class="btn" onclick="scrollToSection('about')">了解更多 ↓</button>
+        </section>
+
+        <!-- 关于我 -->
+        <section class="section" id="about">
+            <h2 class="section-title">关于我 💕</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>🎀 我是谁</h3>
+                    <p>一个温柔善良、乐观向上的女生。喜欢探索新事物，享受生活中的每一个小确幸。</p>
+                </div>
+                <div class="about-card">
+                    <h3>🌟 我的特点</h3>
+                    <p>细心、有耐心、富有创造力。对待朋友真诚，对待生活热情满满！</p>
+                </div>
+                <div class="about-card">
+                    <h3>💫 我的梦想</h3>
+                    <p>成为更好的自己，去更多地方，见更多人，体验更精彩的人生！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 兴趣爱好 -->
+        <section class="section" id="hobbies">
+            <h2 class="section-title">兴趣爱好 🎨</h2>
+            <div class="hobbies-container">
+                <div class="hobbies">
+                    <div class="hobby-tag">📸 摄影</div>
+                    <div class="hobby-tag">🎨 绘画</div>
+                    <div class="hobby-tag">📚 阅读</div>
+                    <div class="hobby-tag">🎵 音乐</div>
+                    <div class="hobby-tag">✈️ 旅行</div>
+                    <div class="hobby-tag">🍰 美食</div>
+                    <div class="hobby-tag">🌸 花艺</div>
+                    <div class="hobby-tag">💄 美妆</div>
+                    <div class="hobby-tag">🎬 电影</div>
+                    <div class="hobby-tag">🧘 瑜伽</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 联系方式 -->
+        <section class="contact" id="contact">
+            <h2 class="section-title">联系我 💌</h2>
+            <p>欢迎和我交朋友！期待与你相遇～</p>
+            <div class="social-links">
+                <a href="#" class="social-link" title="微信">💬</a>
+                <a href="#" class="social-link" title="微博">📱</a>
+                <a href="#" class="social-link" title="邮箱">📧</a>
+                <a href="#" class="social-link" title="小红书">📕</a>
+                <a href="#" class="social-link" title="抖音">🎵</a>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer>
+            <p>© 2026 如意的个人主页</p>
+            <p>用爱制作 💖 | 欢迎来到我的世界</p>
+        </footer>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="bottom-nav">
+        <a href="#home" class="nav-link active" data-section="home">🏠</a>
+        <a href="#about" class="nav-link" data-section="about">💕</a>
+        <a href="#hobbies" class="nav-link" data-section="hobbies">🎨</a>
+        <a href="#contact" class="nav-link" data-section="contact">💌</a>
+    </div>
+
+    <!-- 回到顶部按钮 -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()" aria-label="回到顶部">↑</button>
+
+    <script>
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 800);
+            
+            initParticles();
+            initScrollSpy();
+            initCardAnimation();
+        });
+
+        // 创建漂浮粒子（移动端减少数量）
+        function initParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const isMobile = window.innerWidth < 768;
+            const particleCount = isMobile ? 30 : 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 15 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100 + 100}%`;
+                particle.style.animationDelay = `${Math.random() * 15}s`;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 移动端菜单
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const navOverlay = document.getElementById('navOverlay');
+
+        function toggleMenu() {
+            menuBtn.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            navOverlay.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        navOverlay.addEventListener('click', toggleMenu);
+
+        // 导航链接点击
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // 关闭菜单
+                if (mobileNav.classList.contains('active')) {
+                    toggleMenu();
+                }
+                
+                // 更新激活状态
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // 平滑滚动
+                const targetId = link.getAttribute('href');
+                scrollToSection(targetId.substring(1));
+            });
+        });
+
+        // 平滑滚动到指定区域
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 回到顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 滚动监听
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        // 滚动监听 - 更新导航激活状态
+        function initScrollSpy() {
+            const sections = ['home', 'about', 'hobbies', 'contact'];
+            
+            window.addEventListener('scroll', () => {
+                const scrollPos = window.scrollY + 100;
+                
+                sections.forEach(sectionId => {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        const offsetTop = section.offsetTop;
+                        const offsetHeight = section.offsetHeight;
+                        
+                        if (scrollPos >= offsetTop && scrollPos < offsetTop + offsetHeight) {
+                            document.querySelectorAll('.nav-link').forEach(link => {
+                                link.classList.remove('active');
+                                if (link.getAttribute('data-section') === sectionId || 
+                                    link.getAttribute('href') === `#${sectionId}`) {
+                                    link.classList.add('active');
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+        // 卡片进入动画
+        function initCardAnimation() {
+            const cards = document.querySelectorAll('.about-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 150);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.5s ease';
+                observer.observe(card);
+            });
+        }
+
+        // 触摸反馈
+        document.querySelectorAll('.btn, .social-link, .hobby-tag, .about-card').forEach(el => {
+            el.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            }, { passive: true });
+            
+            el.addEventListener('touchend', function() {
+                this.style.transform = '';
+            }, { passive: true });
+        });
+
+        // 检测PC端显示桌面导航
+        function checkScreenSize() {
+            const desktopNav = document.querySelector('.desktop-nav');
+            if (window.innerWidth >= 768) {
+                desktopNav.style.display = 'flex';
+            } else {
+                desktopNav.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('resize', checkScreenSize);
+        checkScreenSize();
+
+        // 禁止双击缩放
+        document.addEventListener('dblclick', function(event) {
+            event.preventDefault();
+        }, { passive: false });
+
+        console.log('🌸 欢迎来到如意的世界！');
+        console.log('💖 移动端优化版本 - 祝你有个美好的一天！');
+    </script>
+</body>
+</html>

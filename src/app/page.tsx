@@ -54,6 +54,8 @@ export default function Home() {
           <li onClick={() => scrollTo('about')}>💕 关于我</li>
           <li onClick={() => scrollTo('hobbies')}>🎨 兴趣</li>
           <li onClick={() => scrollTo('contact')}>💌 联系</li>
+          <li><a href="/quiz">💖 契合度测试</a></li>
+          <li><a href="/messages">📝 留言墙</a></li>
         </ul>
       </nav>
 
@@ -125,6 +127,20 @@ export default function Home() {
           </div>
         </section>
 
+        {/* 快捷链接 */}
+        <section className="quick-links">
+          <a href="/quiz" className="quick-link-card">
+            <span className="quick-link-icon">💖</span>
+            <span className="quick-link-title">契合度测试</span>
+            <span className="quick-link-desc">测测我们的默契</span>
+          </a>
+          <a href="/messages" className="quick-link-card">
+            <span className="quick-link-icon">📝</span>
+            <span className="quick-link-title">留言墙</span>
+            <span className="quick-link-desc">留下你的足迹</span>
+          </a>
+        </section>
+
         <footer>
           <p>© 2026 汝意的个人主页</p>
           <p>用爱制作 💖 | 欢迎来到我的世界</p>
@@ -135,7 +151,8 @@ export default function Home() {
         <a className={`nav-link ${activeSection === 'home' ? 'active' : ''}`} onClick={() => scrollTo('home')}>🏠</a>
         <a className={`nav-link ${activeSection === 'about' ? 'active' : ''}`} onClick={() => scrollTo('about')}>💕</a>
         <a className={`nav-link ${activeSection === 'hobbies' ? 'active' : ''}`} onClick={() => scrollTo('hobbies')}>🎨</a>
-        <a className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`} onClick={() => scrollTo('contact')}>💌</a>
+        <a className="nav-link" href="/quiz">💖</a>
+        <a className="nav-link" href="/messages">📝</a>
       </div>
 
       <button className={`back-to-top ${showBackToTop ? 'show' : ''}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑</button>
@@ -512,6 +529,50 @@ export default function Home() {
           opacity: 0.85;
           font-size: 13px;
           line-height: 1.8;
+        }
+        .quick-links {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 15px;
+          margin: 20px 0;
+          padding: 0 10px;
+        }
+        .quick-link-card {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: linear-gradient(135deg, rgba(255, 107, 157, 0.3), rgba(240, 147, 251, 0.3));
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border-radius: 20px;
+          padding: 25px 20px;
+          text-decoration: none;
+          color: #fff;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          transition: all 0.3s ease;
+          box-shadow: 0 5px 20px rgba(255, 107, 157, 0.2);
+        }
+        .quick-link-card:hover {
+          transform: translateY(-3px);
+          background: linear-gradient(135deg, rgba(255, 107, 157, 0.4), rgba(240, 147, 251, 0.4));
+          box-shadow: 0 8px 30px rgba(255, 107, 157, 0.3);
+        }
+        .quick-link-card:active {
+          transform: scale(0.98);
+        }
+        .quick-link-icon {
+          font-size: 42px;
+          margin-bottom: 10px;
+        }
+        .quick-link-title {
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 5px;
+        }
+        .quick-link-desc {
+          font-size: 14px;
+          opacity: 0.8;
         }
         .bottom-nav {
           position: fixed;

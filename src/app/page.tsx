@@ -31,7 +31,7 @@ export default function Home() {
 
   // 初始化粒子
   useEffect(() => {
-    const container = document.getElementById('particles');
+    const container = document.getElementById('particles') as HTMLDivElement | null;
     setParticlesContainer(container);
   }, []);
 

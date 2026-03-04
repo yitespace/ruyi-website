@@ -13,7 +13,6 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     checkAuth();
-    fetchBannedIps();
   }, []);
 
   const checkAuth = async () => {
@@ -26,12 +25,6 @@ export default function AdminSettingsPage() {
     } catch (error) {
       console.error('Failed to check auth:', error);
     }
-  };
-
-  const fetchBannedIps = async () => {
-    // 注意：需要创建新的 API 端点来获取封禁 IP 列表
-    // 这里暂时显示为空
-    setBannedIps([]);
   };
 
   const handleBanIp = async () => {
@@ -53,7 +46,6 @@ export default function AdminSettingsPage() {
       if (data.success) {
         alert('IP 已封禁');
         setNewIp('');
-        fetchBannedIps();
       } else {
         alert(data.error || '操作失败');
       }
@@ -78,7 +70,7 @@ export default function AdminSettingsPage() {
 
       if (data.success) {
         alert('IP 已解封');
-        fetchBannedIps();
+        setBannedIps((prev) => prev.filter((i) => i !== ip));
       } else {
         alert(data.error || '操作失败');
       }
@@ -103,7 +95,6 @@ export default function AdminSettingsPage() {
 
     setIsLoading(true);
     try {
-      // 注意：需要创建新的 API 端点来修改密码
       alert('密码修改功能开发中...');
     } catch (error) {
       console.error('Failed to change password:', error);
@@ -115,30 +106,35 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="admin-settings">
-      <h1>⚙️ 设置</h1>
+      <header className="page-header">
+        <h1>⚙️ 设置</h1>
+      </header>
 
       {/* IP 封禁管理 */}
       <section className="settings-section">
-        <h2>🚫 IP 封禁管理</h2>
-        <div className="ip-ban-form">
+        <h2 className="section-title">🚫 IP 封禁管理</h2>
+        <div className="ip-form">
           <input
             type="text"
             placeholder="输入要封禁的 IP 地址"
             value={newIp}
             onChange={(e) => setNewIp(e.target.value)}
+            className="form-input"
           />
-          <button onClick={handleBanIp} disabled={isLoading}>
+          <button onClick={handleBanIp} disabled={isLoading} className="ban-btn">
             封禁
           </button>
         </div>
 
         {bannedIps.length > 0 ? (
-          <div className="banned-ips">
-            <h3>已封禁 IP 列表</h3>
+          <div className="banned-list">
+            <h3 className="list-title">已封禁列表</h3>
             {bannedIps.map((ip) => (
-              <div key={ip} className="banned-ip-item">
-                <span>{ip}</span>
-                <button onClick={() => handleUnbanIp(ip)}>解封</button>
+              <div key={ip} className="banned-item">
+                <span className="ip-text">{ip}</span>
+                <button onClick={() => handleUnbanIp(ip)} className="unban-btn">
+                  解封
+                </button>
               </div>
             ))}
           </div>
@@ -149,7 +145,7 @@ export default function AdminSettingsPage() {
 
       {/* 修改密码 */}
       <section className="settings-section">
-        <h2>🔐 修改密码</h2>
+        <h2 className="section-title">🔐 修改密码</h2>
         <div className="form-group">
           <label>新密码</label>
           <input
@@ -157,6 +153,7 @@ export default function AdminSettingsPage() {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             placeholder="至少 6 位"
+            className="form-input"
           />
         </div>
         <div className="form-group">
@@ -166,6 +163,7 @@ export default function AdminSettingsPage() {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="再次输入新密码"
+            className="form-input"
           />
         </div>
         <button className="change-password-btn" onClick={handleChangePassword} disabled={isLoading}>
@@ -175,7 +173,7 @@ export default function AdminSettingsPage() {
 
       {/* 关于 */}
       <section className="settings-section">
-        <h2>ℹ️ 关于</h2>
+        <h2 className="section-title">ℹ️ 关于</h2>
         <div className="about-info">
           <p>汝意个人网站管理系统</p>
           <p>版本：1.0.0</p>
@@ -186,141 +184,165 @@ export default function AdminSettingsPage() {
       <style jsx>{`
         .admin-settings {
           padding: 20px;
+          padding-bottom: 100px;
         }
 
-        h1 {
+        .page-header {
+          margin-bottom: 20px;
+          padding-top: 10px;
+        }
+
+        .page-header h1 {
           font-size: 24px;
           color: #fff;
-          margin-bottom: 20px;
-        }
-
-        h2 {
-          font-size: 18px;
-          color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 15px;
-        }
-
-        h3 {
-          font-size: 15px;
-          color: rgba(255, 255, 255, 0.7);
-          margin-bottom: 10px;
+          margin: 0;
         }
 
         .settings-section {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border-radius: 16px;
           padding: 20px;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .ip-ban-form {
+        .section-title {
+          font-size: 16px;
+          color: rgba(255, 255, 255, 0.9);
+          margin-bottom: 16px;
+          font-weight: 600;
+        }
+
+        .ip-form {
           display: flex;
           gap: 10px;
-          margin-bottom: 15px;
+          margin-bottom: 16px;
         }
 
-        .ip-ban-form input {
+        .ip-form .form-input {
           flex: 1;
-          padding: 12px 15px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
+          padding: 12px 14px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 10px;
           color: #fff;
-          font-size: 15px;
+          font-size: 14px;
           outline: none;
         }
 
-        .ip-ban-form input:focus {
-          border-color: rgba(255, 255, 255, 0.4);
+        .ip-form .form-input:focus {
+          border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .ip-ban-form button {
+        .ban-btn {
           padding: 12px 20px;
           background: linear-gradient(45deg, #f44336, #e91e63);
           color: #fff;
           border: none;
-          border-radius: 8px;
-          cursor: pointer;
+          border-radius: 10px;
+          font-size: 14px;
           font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
         }
 
-        .ip-ban-form button:disabled {
+        .ban-btn:disabled {
           opacity: 0.6;
           cursor: not-allowed;
         }
 
-        .banned-ips {
-          margin-top: 15px;
+        .ban-btn:active:not(:disabled) {
+          transform: scale(0.95);
         }
 
-        .banned-ip-item {
+        .banned-list {
+          margin-top: 16px;
+        }
+
+        .list-title {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 12px;
+        }
+
+        .banned-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 10px 15px;
+          padding: 12px 14px;
           background: rgba(255, 255, 255, 0.05);
-          border-radius: 8px;
+          border-radius: 10px;
           margin-bottom: 8px;
         }
 
-        .banned-ip-item span {
+        .ip-text {
           font-family: monospace;
+          font-size: 13px;
           color: rgba(255, 255, 255, 0.8);
         }
 
-        .banned-ip-item button {
+        .unban-btn {
           padding: 6px 12px;
-          background: rgba(76, 175, 80, 0.3);
-          color: #fff;
-          border: none;
+          background: rgba(76, 175, 80, 0.2);
+          color: #81c784;
+          border: 1px solid rgba(76, 175, 80, 0.3);
           border-radius: 6px;
-          cursor: pointer;
           font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .unban-btn:active {
+          transform: scale(0.95);
         }
 
         .empty-state {
           padding: 20px;
           text-align: center;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 14px;
         }
 
         .form-group {
-          margin-bottom: 15px;
+          margin-bottom: 16px;
         }
 
         .form-group label {
           display: block;
-          font-size: 14px;
+          font-size: 13px;
           color: rgba(255, 255, 255, 0.7);
           margin-bottom: 8px;
         }
 
-        .form-group input {
+        .form-group .form-input {
           width: 100%;
-          padding: 12px 15px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
+          padding: 12px 14px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 10px;
           color: #fff;
-          font-size: 15px;
+          font-size: 14px;
           outline: none;
           box-sizing: border-box;
         }
 
-        .form-group input:focus {
-          border-color: rgba(255, 255, 255, 0.4);
+        .form-group .form-input:focus {
+          border-color: rgba(255, 255, 255, 0.3);
         }
 
         .change-password-btn {
           width: 100%;
-          padding: 12px;
+          padding: 14px;
           background: linear-gradient(45deg, #667eea, #764ba2);
           color: #fff;
           border: none;
-          border-radius: 8px;
+          border-radius: 10px;
           font-size: 15px;
           font-weight: 600;
           cursor: pointer;
+          transition: all 0.2s ease;
         }
 
         .change-password-btn:disabled {
@@ -329,8 +351,9 @@ export default function AdminSettingsPage() {
         }
 
         .about-info {
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.6);
           line-height: 1.8;
+          font-size: 14px;
         }
       `}</style>
     </div>

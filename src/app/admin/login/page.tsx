@@ -54,7 +54,8 @@ export default function AdminLoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-title">🔐 管理端登录</h1>
+        <div className="login-icon">🔐</div>
+        <h1 className="login-title">管理端登录</h1>
         <p className="login-subtitle">请输入管理员密码</p>
 
         <form className="login-form" onSubmit={handleSubmit}>
@@ -77,7 +78,7 @@ export default function AdminLoginPage() {
         </form>
 
         <a href="/" className="back-home">
-          🏠 返回首页
+          ← 返回首页
         </a>
       </div>
 
@@ -92,32 +93,40 @@ export default function AdminLoginPage() {
         }
 
         .login-card {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.08);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border-radius: 20px;
+          border-radius: 24px;
           padding: 40px 30px;
           width: 100%;
           max-width: 400px;
           text-align: center;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .login-icon {
+          font-size: 56px;
+          margin-bottom: 10px;
         }
 
         .login-title {
-          font-size: 28px;
-          margin-bottom: 10px;
+          font-size: 24px;
           color: #fff;
+          margin-bottom: 8px;
+          font-weight: 600;
         }
 
         .login-subtitle {
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.6);
+          font-size: 14px;
           margin-bottom: 30px;
         }
 
         .login-form {
           display: flex;
           flex-direction: column;
-          gap: 15px;
+          gap: 16px;
         }
 
         .form-group {
@@ -126,10 +135,10 @@ export default function AdminLoginPage() {
 
         .form-input {
           width: 100%;
-          padding: 15px 20px;
-          border: 2px solid rgba(255, 255, 255, 0.2);
-          border-radius: 12px;
-          background: rgba(255, 255, 255, 0.1);
+          padding: 16px 18px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 14px;
+          background: rgba(255, 255, 255, 0.08);
           color: #fff;
           font-size: 16px;
           outline: none;
@@ -138,33 +147,34 @@ export default function AdminLoginPage() {
         }
 
         .form-input::placeholder {
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.4);
         }
 
         .form-input:focus {
-          border-color: rgba(255, 255, 255, 0.4);
-          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(255, 255, 255, 0.3);
+          background: rgba(255, 255, 255, 0.12);
         }
 
         .form-error {
           color: #ff6b6b;
           font-size: 14px;
-          padding: 10px;
+          padding: 12px;
           background: rgba(255, 107, 107, 0.1);
-          border-radius: 8px;
+          border-radius: 10px;
+          border: 1px solid rgba(255, 107, 107, 0.2);
         }
 
         .login-btn {
-          padding: 15px;
+          padding: 16px;
           background: linear-gradient(45deg, #667eea, #764ba2);
           color: #fff;
           border: none;
-          border-radius: 12px;
+          border-radius: 14px;
           font-size: 16px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
-          margin-top: 10px;
+          margin-top: 8px;
         }
 
         .login-btn:disabled {
@@ -172,22 +182,24 @@ export default function AdminLoginPage() {
           cursor: not-allowed;
         }
 
-        .login-btn:not(:disabled):active {
+        .login-btn:active:not(:disabled) {
           transform: scale(0.98);
         }
 
         .back-home {
           display: inline-block;
-          margin-top: 20px;
-          color: rgba(255, 255, 255, 0.7);
+          margin-top: 24px;
+          color: rgba(255, 255, 255, 0.5);
           text-decoration: none;
           padding: 10px 20px;
           border-radius: 20px;
           transition: all 0.2s ease;
+          font-size: 14px;
         }
 
         .back-home:hover {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.7);
         }
       `}</style>
     </div>

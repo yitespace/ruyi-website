@@ -94,14 +94,16 @@ export default function AdminContentPage() {
 
   return (
     <div className="admin-content">
-      <h1>📝 内容编辑</h1>
+      <header className="page-header">
+        <h1>📝 内容编辑</h1>
+      </header>
 
       <div className="tabs">
         <button
           className={`tab ${activeTab === 'hero' ? 'active' : ''}`}
           onClick={() => setActiveTab('hero')}
         >
-          首页区域
+          首页
         </button>
         <button
           className={`tab ${activeTab === 'about' ? 'active' : ''}`}
@@ -127,6 +129,7 @@ export default function AdminContentPage() {
                 value={heroData.avatar}
                 onChange={(e) => setHeroData({ ...heroData, avatar: e.target.value })}
                 maxLength={10}
+                className="form-input"
               />
             </div>
             <div className="form-group">
@@ -135,14 +138,16 @@ export default function AdminContentPage() {
                 value={heroData.title}
                 onChange={(e) => setHeroData({ ...heroData, title: e.target.value })}
                 rows={2}
+                className="form-textarea"
               />
             </div>
             <div className="form-group">
-              <label>副标题/介绍</label>
+              <label>副标题</label>
               <textarea
                 value={heroData.subtitle}
                 onChange={(e) => setHeroData({ ...heroData, subtitle: e.target.value })}
                 rows={4}
+                className="form-textarea"
               />
             </div>
           </div>
@@ -152,9 +157,7 @@ export default function AdminContentPage() {
           <div className="form-section">
             {aboutData.map((card, index) => (
               <div key={index} className="card-editor">
-                <div className="card-header">
-                  <span>卡片 {index + 1}</span>
-                </div>
+                <div className="card-header">卡片 {index + 1}</div>
                 <div className="form-group">
                   <label>图标</label>
                   <input
@@ -162,6 +165,7 @@ export default function AdminContentPage() {
                     value={card.icon}
                     onChange={(e) => updateAboutCard(index, 'icon', e.target.value)}
                     maxLength={10}
+                    className="form-input"
                   />
                 </div>
                 <div className="form-group">
@@ -171,6 +175,7 @@ export default function AdminContentPage() {
                     value={card.title}
                     onChange={(e) => updateAboutCard(index, 'title', e.target.value)}
                     maxLength={20}
+                    className="form-input"
                   />
                 </div>
                 <div className="form-group">
@@ -179,6 +184,7 @@ export default function AdminContentPage() {
                     value={card.content}
                     onChange={(e) => updateAboutCard(index, 'content', e.target.value)}
                     rows={3}
+                    className="form-textarea"
                   />
                 </div>
               </div>
@@ -188,15 +194,16 @@ export default function AdminContentPage() {
 
         {activeTab === 'hobbies' && (
           <div className="form-section">
-            <div className="hobby-input">
+            <div className="hobby-input-wrapper">
               <input
                 type="text"
                 value={newHobby}
                 onChange={(e) => setNewHobby(e.target.value)}
                 placeholder="输入新的兴趣爱好，如：🎸 吉他"
                 onKeyPress={(e) => e.key === 'Enter' && addHobby()}
+                className="form-input"
               />
-              <button onClick={addHobby}>添加</button>
+              <button className="add-btn" onClick={addHobby}>添加</button>
             </div>
             <div className="hobbies-list">
               {hobbiesData.map((hobby, index) => (
@@ -217,43 +224,57 @@ export default function AdminContentPage() {
       <style jsx>{`
         .admin-content {
           padding: 20px;
+          padding-bottom: 100px;
         }
 
-        h1 {
+        .page-header {
+          margin-bottom: 20px;
+          padding-top: 10px;
+        }
+
+        .page-header h1 {
           font-size: 24px;
           color: #fff;
-          margin-bottom: 20px;
+          margin: 0;
         }
 
         .tabs {
           display: flex;
-          gap: 10px;
+          gap: 8px;
           margin-bottom: 20px;
+          background: rgba(255, 255, 255, 0.08);
+          padding: 5px;
+          border-radius: 12px;
           overflow-x: auto;
         }
 
         .tab {
-          padding: 10px 20px;
-          background: rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.7);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          flex: 1;
+          padding: 12px 16px;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.6);
+          border: none;
           border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
           cursor: pointer;
-          white-space: nowrap;
           transition: all 0.2s ease;
+          white-space: nowrap;
         }
 
         .tab.active {
-          background: linear-gradient(45deg, #667eea, #764ba2);
+          background: rgba(255, 255, 255, 0.15);
           color: #fff;
-          border-color: transparent;
         }
 
         .tab-content {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.06);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          border-radius: 16px;
           padding: 20px;
           margin-bottom: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .form-section {
@@ -269,108 +290,125 @@ export default function AdminContentPage() {
         }
 
         .form-group label {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.8);
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.7);
+          font-weight: 500;
         }
 
-        .form-group input,
-        .form-group textarea {
-          padding: 12px 15px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
+        .form-input,
+        .form-textarea {
+          padding: 12px 14px;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          border-radius: 10px;
           color: #fff;
-          font-size: 15px;
+          font-size: 14px;
           font-family: inherit;
           outline: none;
           transition: all 0.2s ease;
         }
 
-        .form-group input::placeholder,
-        .form-group textarea::placeholder {
-          color: rgba(255, 255, 255, 0.5);
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+          color: rgba(255, 255, 255, 0.4);
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus {
-          border-color: rgba(255, 255, 255, 0.4);
-          background: rgba(255, 255, 255, 0.15);
+        .form-input:focus,
+        .form-textarea:focus {
+          border-color: rgba(255, 255, 255, 0.3);
+          background: rgba(255, 255, 255, 0.12);
         }
 
         .card-editor {
           background: rgba(255, 255, 255, 0.05);
-          border-radius: 8px;
-          padding: 15px;
-          margin-bottom: 15px;
+          border-radius: 12px;
+          padding: 16px;
+          margin-bottom: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .card-header {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.7);
-          margin-bottom: 10px;
+          color: rgba(255, 255, 255, 0.6);
+          margin-bottom: 12px;
+          font-weight: 500;
         }
 
-        .hobby-input {
+        .hobby-input-wrapper {
           display: flex;
           gap: 10px;
         }
 
-        .hobby-input input {
+        .hobby-input-wrapper .form-input {
           flex: 1;
-          padding: 12px 15px;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 8px;
-          color: #fff;
-          font-size: 15px;
-          outline: none;
         }
 
-        .hobby-input button {
+        .add-btn {
           padding: 12px 20px;
           background: linear-gradient(45deg, #667eea, #764ba2);
           color: #fff;
           border: none;
-          border-radius: 8px;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 600;
           cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .add-btn:active {
+          transform: scale(0.95);
         }
 
         .hobbies-list {
           display: flex;
           flex-direction: column;
           gap: 10px;
-          margin-top: 15px;
+          margin-top: 16px;
         }
 
         .hobby-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 15px;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 8px;
+          padding: 12px 14px;
+          background: rgba(255, 255, 255, 0.06);
+          border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .hobby-item span {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.9);
         }
 
         .hobby-item button {
-          padding: 5px 10px;
-          background: rgba(244, 67, 54, 0.3);
-          color: #fff;
-          border: none;
-          border-radius: 4px;
+          padding: 6px 10px;
+          background: rgba(244, 67, 54, 0.2);
+          color: #ff6b6b;
+          border: 1px solid rgba(244, 67, 54, 0.3);
+          border-radius: 6px;
           cursor: pointer;
+          font-size: 13px;
+          transition: all 0.2s ease;
+        }
+
+        .hobby-item button:active {
+          transform: scale(0.95);
+          background: rgba(244, 67, 54, 0.3);
         }
 
         .save-btn {
           width: 100%;
-          padding: 15px;
+          padding: 16px;
           background: linear-gradient(45deg, #4caf50, #8bc34a);
           color: #fff;
           border: none;
-          border-radius: 12px;
+          border-radius: 14px;
           font-size: 16px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.2s ease;
+          box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
 
         .save-btn:disabled {

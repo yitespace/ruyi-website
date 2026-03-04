@@ -14,6 +14,7 @@ interface Message {
 
 export default function AdminMessagesPage() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'pending' | 'approved'>('approved');
   const [pendingMessages, setPendingMessages] = useState<Message[]>([]);
   const [approvedMessages, setApprovedMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +45,6 @@ export default function AdminMessagesPage() {
       if (data.success) {
         setApprovedMessages(data.messages || []);
       }
-      // 注意：待审核留言需要单独的 API
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     } finally {
@@ -64,11 +64,11 @@ export default function AdminMessagesPage() {
       const data = await res.json();
 
       if (data.success) {
-        // 从待审核列表移除
         setPendingMessages((prev) => prev.filter((m) => m.id !== id));
         if (action === 'approve') {
-          fetchMessages(); // 重新获取已审核列表
+          fetchMessages();
         }
+        alert(action === 'approve' ? '已通过' : '已拒绝');
       } else {
         alert(data.error || '操作失败');
       }
@@ -125,22 +125,51 @@ export default function AdminMessagesPage() {
   };
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleString('zh-CN');
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+
+    if (diff < minute) return '刚刚';
+    if (diff < hour) return `${Math.floor(diff / minute)}分钟前`;
+    if (diff < day) return `${Math.floor(diff / hour)}小时前`;
+    return date.toLocaleDateString('zh-CN');
   };
 
   return (
     <div className="admin-messages">
-      <h1>💬 留言审核</h1>
+      <header className="page-header">
+        <h1>💬 留言审核</h1>
+      </header>
+
+      <div className="tabs">
+        <button
+          className={`tab ${activeTab === 'pending' ? 'active' : ''}`}
+          onClick={() => setActiveTab('pending')}
+        >
+          待审核 {pendingMessages.length > 0 && <span className="badge">{pendingMessages.length}</span>}
+        </button>
+        <button
+          className={`tab ${activeTab === 'approved' ? 'active' : ''}`}
+          onClick={() => setActiveTab('approved')}
+        >
+          已通过
+        </button>
+      </div>
 
       {isLoading ? (
         <div className="loading">加载中...</div>
       ) : (
         <>
-          {/* 待审核留言 */}
-          <section className="messages-section">
-            <h2>⏳ 待审核 ({pendingMessages.length})</h2>
-            {pendingMessages.length === 0 ? (
-              <div className="empty-state">暂无待审核留言</div>
+          {activeTab === 'pending' ? (
+            pendingMessages.length === 0 ? (
+              <div className="empty-state">
+                <span className="empty-icon">🎉</span>
+                <p>暂无待审核留言</p>
+              </div>
             ) : (
               <div className="messages-list">
                 {pendingMessages.map((msg) => (
@@ -157,7 +186,7 @@ export default function AdminMessagesPage() {
                         <div className="message-name">{msg.name}</div>
                         <div className="message-meta">
                           <span>{formatTime(msg.createdAt)}</span>
-                          <span className="message-ip">IP: {msg.ip}</span>
+                          <span className="ip-tag">IP: {msg.ip}</span>
                         </div>
                       </div>
                     </div>
@@ -182,20 +211,19 @@ export default function AdminMessagesPage() {
                         onClick={() => handleBanIp(msg.ip)}
                         disabled={actionLock === msg.id}
                       >
-                        🚫 封禁 IP
+                        🚫
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
-          </section>
-
-          {/* 已审核留言 */}
-          <section className="messages-section">
-            <h2>✅ 已审核 ({approvedMessages.length})</h2>
-            {approvedMessages.length === 0 ? (
-              <div className="empty-state">暂无已审核留言</div>
+            )
+          ) : (
+            approvedMessages.length === 0 ? (
+              <div className="empty-state">
+                <span className="empty-icon">📭</span>
+                <p>暂无已审核留言</p>
+              </div>
             ) : (
               <div className="messages-list">
                 {approvedMessages.map((msg) => (
@@ -227,59 +255,106 @@ export default function AdminMessagesPage() {
                   </div>
                 ))}
               </div>
-            )}
-          </section>
+            )
+          )}
         </>
       )}
 
       <style jsx>{`
         .admin-messages {
           padding: 20px;
+          padding-bottom: 100px;
         }
 
-        h1 {
+        .page-header {
+          margin-bottom: 20px;
+          padding-top: 10px;
+        }
+
+        .page-header h1 {
           font-size: 24px;
           color: #fff;
-          margin-bottom: 20px;
+          margin: 0;
         }
 
-        h2 {
-          font-size: 18px;
-          color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 15px;
+        .tabs {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 20px;
+          background: rgba(255, 255, 255, 0.08);
+          padding: 5px;
+          border-radius: 12px;
+        }
+
+        .tab {
+          flex: 1;
+          padding: 12px 20px;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.6);
+          border: none;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .tab.active {
+          background: rgba(255, 255, 255, 0.15);
+          color: #fff;
+        }
+
+        .badge {
+          background: linear-gradient(45deg, #ff6b9d, #f093fb);
+          color: #fff;
+          font-size: 11px;
+          padding: 2px 6px;
+          border-radius: 10px;
+          min-width: 18px;
+          text-align: center;
         }
 
         .loading {
           text-align: center;
-          padding: 40px;
+          padding: 60px 20px;
           color: rgba(255, 255, 255, 0.7);
         }
 
-        .messages-section {
-          margin-bottom: 30px;
+        .empty-state {
+          text-align: center;
+          padding: 60px 20px;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 16px;
         }
 
-        .empty-state {
-          padding: 30px;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
-          text-align: center;
+        .empty-icon {
+          font-size: 48px;
+          display: block;
+          margin-bottom: 15px;
+        }
+
+        .empty-state p {
           color: rgba(255, 255, 255, 0.6);
+          margin: 0;
         }
 
         .messages-list {
           display: flex;
           flex-direction: column;
-          gap: 15px;
+          gap: 12px;
         }
 
         .message-card {
           background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border-radius: 12px;
-          padding: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 16px;
+          padding: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .message-card.approved {
@@ -288,20 +363,20 @@ export default function AdminMessagesPage() {
 
         .message-header {
           display: flex;
-          gap: 15px;
+          gap: 12px;
           align-items: center;
-          margin-bottom: 15px;
+          margin-bottom: 12px;
         }
 
         .message-avatar {
-          width: 45px;
-          height: 45px;
+          width: 42px;
+          height: 42px;
           border-radius: 50%;
           background: linear-gradient(45deg, #ff6b9d, #f093fb);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 20px;
+          font-size: 18px;
           overflow: hidden;
           flex-shrink: 0;
         }
@@ -314,26 +389,30 @@ export default function AdminMessagesPage() {
 
         .message-info {
           flex: 1;
+          min-width: 0;
         }
 
         .message-name {
           font-weight: 600;
           color: #fff;
+          font-size: 15px;
           margin-bottom: 4px;
         }
 
         .message-meta {
           font-size: 12px;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.5);
           display: flex;
           gap: 10px;
+          align-items: center;
         }
 
-        .message-ip {
+        .ip-tag {
           font-family: monospace;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.08);
           padding: 2px 6px;
           border-radius: 4px;
+          font-size: 11px;
         }
 
         .message-content {
@@ -341,19 +420,21 @@ export default function AdminMessagesPage() {
           line-height: 1.6;
           margin-bottom: 15px;
           word-wrap: break-word;
+          font-size: 14px;
         }
 
         .message-actions {
           display: flex;
-          gap: 10px;
+          gap: 8px;
           flex-wrap: wrap;
         }
 
         .message-actions button {
-          padding: 8px 16px;
+          padding: 8px 14px;
           border: none;
           border-radius: 8px;
-          font-size: 14px;
+          font-size: 13px;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.2s ease;
         }
@@ -374,13 +455,14 @@ export default function AdminMessagesPage() {
         }
 
         .btn-ban {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.15);
           color: #fff;
         }
 
         .btn-delete {
-          background: rgba(244, 67, 54, 0.3);
+          background: rgba(244, 67, 54, 0.2);
           color: #fff;
+          border: 1px solid rgba(244, 67, 54, 0.3);
         }
 
         .message-actions button:active:not(:disabled) {

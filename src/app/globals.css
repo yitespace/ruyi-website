@@ -22,95 +22,90 @@ body {
   overflow-x: hidden;
   color: #fff;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Admin Layout Styles */
+/* 屏幕阅读器专用 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ========== Admin Layout Styles - Mobile First ========== */
 .admin-layout {
-  display: flex;
   min-height: 100vh;
-}
-
-.admin-sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 250px;
-  height: 100vh;
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-}
-
-.admin-logo {
-  font-size: 20px;
-  font-weight: 600;
-  color: #fff;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.admin-nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  overflow-y: auto;
-}
-
-.admin-nav-item {
-  padding: 12px 15px;
-  color: rgba(255, 255, 255, 0.7);
-  text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  font-size: 15px;
-}
-
-.admin-nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  padding-bottom: 70px;
 }
 
 .admin-content {
-  margin-left: 250px;
-  flex: 1;
-  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
 }
 
-@media (max-width: 768px) {
-  .admin-sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 15px;
-  }
+/* 管理端底部导航 */
+.admin-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
-  .admin-logo {
-    margin-bottom: 0;
-    padding: 10px;
-    font-size: 18px;
-    border-bottom: none;
-  }
+.admin-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+  min-width: 60px;
+}
 
-  .admin-nav {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 10px;
-    flex: 1;
-  }
+.admin-nav-item:active {
+  transform: scale(0.95);
+}
 
-  .admin-nav-item {
-    white-space: nowrap;
-    font-size: 14px;
-    padding: 8px 12px;
-  }
+.admin-nav-item.active {
+  color: #fff;
+}
 
-  .admin-content {
-    margin-left: 0;
+.admin-nav-item.active .nav-icon {
+  transform: scale(1.1);
+}
+
+.admin-nav-item .nav-icon {
+  font-size: 22px;
+  transition: transform 0.2s ease;
+}
+
+.admin-nav-item .nav-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* 桌面端管理 sidebar */
+@media (min-width: 1024px) {
+  .admin-bottom-nav {
+    display: none;
   }
 }

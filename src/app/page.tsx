@@ -25,7 +25,6 @@ function createParticles(container: HTMLElement | null) {
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [particlesContainer, setParticlesContainer] = useState<HTMLDivElement | null>(null);
 
@@ -48,18 +47,6 @@ export default function Home() {
   // 滚动监听
   const handleScroll = useCallback(() => {
     setShowBackToTop(window.scrollY > 200);
-    const sections = ['home', 'about', 'hobbies', 'contact'];
-    const scrollPos = window.scrollY + window.innerHeight / 3;
-
-    for (const id of sections) {
-      const el = document.getElementById(id);
-      if (el) {
-        if (scrollPos >= el.offsetTop && scrollPos < el.offsetTop + el.offsetHeight) {
-          setActiveSection(id);
-          break;
-        }
-      }
-    }
   }, []);
 
   useEffect(() => {
@@ -132,16 +119,10 @@ export default function Home() {
             <button role="menuitem" onClick={() => scrollTo('hobbies')}>🎨 兴趣爱好</button>
           </li>
           <li role="none">
-            <button role="menuitem" onClick={() => scrollTo('contact')}>💌 联系方式</button>
-          </li>
-          <li role="none">
             <a href="/quiz" role="menuitem">💖 契合度测试</a>
           </li>
           <li role="none">
             <a href="/messages" role="menuitem">📝 留言墙</a>
-          </li>
-          <li role="none">
-            <a href="/admin/login" role="menuitem">🔐 管理端</a>
           </li>
         </ul>
       </nav>
@@ -206,27 +187,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 联系方式 */}
-        <section className="contact" id="contact" aria-labelledby="contact-title">
-          <h2 id="contact-title" className="section-title">联系我 💌</h2>
-          <p>欢迎和我交朋友！期待与你相遇～</p>
-          <div className="social-links" role="navigation" aria-label="社交媒体链接">
-            <a className="social-link" href="#" title="微信" aria-label="微信">💬</a>
-            <a className="social-link" href="#" title="微博" aria-label="微博">📱</a>
-            <a className="social-link" href="#" title="邮箱" aria-label="邮箱">📧</a>
-            <a className="social-link" href="#" title="小红书" aria-label="小红书">📕</a>
-            <a className="social-link" href="#" title="抖音" aria-label="抖音">🎵</a>
-          </div>
-        </section>
-
         {/* 快捷链接 */}
         <section className="quick-links" aria-label="快捷链接">
-          <a href="/quiz" className="quick-link-card">
+          <a href="/quiz" className="quick-link-card quiz-card">
             <span className="quick-link-icon" aria-hidden="true">💖</span>
             <span className="quick-link-title">契合度测试</span>
-            <span className="quick-link-desc">测测我们的默契</span>
+            <span className="quick-link-desc">测测我们的默契程度</span>
           </a>
-          <a href="/messages" className="quick-link-card">
+          <a href="/messages" className="quick-link-card messages-card">
             <span className="quick-link-icon" aria-hidden="true">📝</span>
             <span className="quick-link-title">留言墙</span>
             <span className="quick-link-desc">留下你的足迹</span>
@@ -236,38 +204,8 @@ export default function Home() {
         {/* 页脚 */}
         <footer role="contentinfo">
           <p>© 2026 汝意的个人主页</p>
-          <p>用爱制作 💖 | 欢迎来到我的世界</p>
+          <p>用爱制作 💖</p>
         </footer>
-      </div>
-
-      {/* 底部导航栏 - 仅移动端 */}
-      <div className="bottom-nav" role="navigation" aria-label="底部导航">
-        <button
-          className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}
-          onClick={() => scrollTo('home')}
-          aria-label="返回首页"
-          aria-current={activeSection === 'home' ? 'true' : undefined}
-        >
-          🏠
-        </button>
-        <button
-          className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}
-          onClick={() => scrollTo('about')}
-          aria-label="关于我"
-          aria-current={activeSection === 'about' ? 'true' : undefined}
-        >
-          💕
-        </button>
-        <button
-          className={`nav-link ${activeSection === 'hobbies' ? 'active' : ''}`}
-          onClick={() => scrollTo('hobbies')}
-          aria-label="兴趣爱好"
-          aria-current={activeSection === 'hobbies' ? 'true' : undefined}
-        >
-          🎨
-        </button>
-        <a className="nav-link" href="/quiz" aria-label="契合度测试">💖</a>
-        <a className="nav-link" href="/messages" aria-label="留言墙">📝</a>
       </div>
 
       {/* 返回顶部按钮 */}
@@ -374,7 +312,7 @@ export default function Home() {
           max-width: 480px;
           margin: 0 auto;
           padding: 12px;
-          padding-bottom: 100px;
+          padding-bottom: 80px;
         }
 
         /* 顶部导航栏 */
@@ -708,79 +646,82 @@ export default function Home() {
           transform: scale(0.95);
         }
 
-        /* 联系方式 */
-        .contact {
-          text-align: center;
-          padding: 32px 16px;
-        }
-        .contact p {
-          font-size: 15px;
-          opacity: 0.95;
-          margin-bottom: 20px;
-        }
-        .social-links {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .social-link {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.15);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 22px;
-          transition: all 0.25s ease;
-          text-decoration: none;
-          border: 2px solid rgba(255, 255, 255, 0.25);
-        }
-        .social-link:active {
-          background: linear-gradient(45deg, #ff6b9d, #f093fb);
-          transform: scale(0.9);
-          border-color: transparent;
-        }
-
-        /* 快捷链接 */}
+        /* 快捷链接 */
         .quick-links {
           display: grid;
-          gap: 12px;
-          margin: 16px 0;
+          gap: 14px;
+          margin: 20px 0;
           padding: 0 8px;
         }
         .quick-link-card {
+          position: relative;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          background: linear-gradient(135deg, rgba(255, 107, 157, 0.25), rgba(240, 147, 251, 0.25));
+          background: rgba(255, 255, 255, 0.1);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border-radius: 18px;
-          padding: 24px 16px;
+          border-radius: 20px;
+          padding: 28px 20px;
           text-decoration: none;
           color: #fff;
           border: 1px solid rgba(255, 255, 255, 0.15);
-          transition: all 0.25s ease;
-          box-shadow: 0 4px 16px rgba(255, 107, 157, 0.15);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          overflow: hidden;
+        }
+        .quick-link-card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(255, 107, 157, 0.15), rgba(240, 147, 251, 0.15));
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        .quick-link-card:hover::before {
+          opacity: 1;
         }
         .quick-link-card:active {
-          transform: scale(0.98);
+          transform: scale(0.97);
+        }
+        /* 契合度测试卡片 - 粉色渐变 */
+        .quick-link-card.quiz-card {
+          background: linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(240, 147, 251, 0.15));
+          border-color: rgba(255, 107, 157, 0.3);
+        }
+        .quick-link-card.quiz-card::before {
+          background: linear-gradient(135deg, rgba(255, 107, 157, 0.25), rgba(240, 147, 251, 0.25));
+        }
+        /* 留言墙卡片 - 蓝色渐变 */
+        .quick-link-card.messages-card {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.15));
+          border-color: rgba(102, 126, 234, 0.3);
+        }
+        .quick-link-card.messages-card::before {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.25), rgba(118, 75, 162, 0.25));
         }
         .quick-link-icon {
-          font-size: 40px;
-          margin-bottom: 8px;
+          position: relative;
+          font-size: 44px;
+          margin-bottom: 10px;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+          transition: transform 0.3s ease;
+        }
+        .quick-link-card:active .quick-link-icon {
+          transform: scale(1.1);
         }
         .quick-link-title {
-          font-size: 17px;
+          position: relative;
+          font-size: 18px;
           font-weight: 600;
-          margin-bottom: 4px;
+          margin-bottom: 6px;
+          text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
         .quick-link-desc {
+          position: relative;
           font-size: 13px;
-          opacity: 0.75;
+          opacity: 0.8;
+          text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
         }
 
         /* 页脚 */
@@ -795,50 +736,6 @@ export default function Home() {
           opacity: 0.8;
           font-size: 13px;
           line-height: 2;
-        }
-
-        /* 底部导航栏 */
-        .bottom-nav {
-          position: fixed;
-          bottom: 16px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: rgba(255, 255, 255, 0.18);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          border-radius: 50px;
-          padding: 10px 20px;
-          display: flex;
-          gap: 8px;
-          z-index: 100;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .bottom-nav button,
-        .bottom-nav a {
-          width: 44px;
-          height: 44px;
-          border: none;
-          background: transparent;
-          color: #fff;
-          font-size: 20px;
-          border-radius: 50%;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s ease;
-          text-decoration: none;
-          padding: 0;
-        }
-        .bottom-nav button:active,
-        .bottom-nav a:active {
-          background: rgba(255, 255, 255, 0.25);
-          transform: scale(0.9);
-        }
-        .bottom-nav .active {
-          background: linear-gradient(45deg, #ff6b9d, #f093fb);
-          box-shadow: 0 3px 12px rgba(255, 107, 157, 0.4);
         }
 
         /* 返回顶部按钮 */
@@ -873,9 +770,6 @@ export default function Home() {
 
         /* iPhone 安全区域 */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
-          .bottom-nav {
-            bottom: calc(16px + env(safe-area-inset-bottom));
-          }
           .back-to-top {
             bottom: calc(80px + env(safe-area-inset-bottom));
           }

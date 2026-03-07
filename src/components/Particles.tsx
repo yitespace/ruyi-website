@@ -7,18 +7,20 @@ export default function Particles() {
     id: number;
     size: number;
     left: number;
+    top: number;
     delay: number;
     duration: number;
   }>>([]);
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    const particleCount = isMobile ? 30 : 50;
+    const particleCount = isMobile ? 25 : 40;
 
     const newParticles = Array.from({ length: particleCount }, (_, i) => ({
       id: i,
-      size: Math.random() * 15 + 5,
+      size: Math.random() * 12 + 4,
       left: Math.random() * 100,
+      top: Math.random() * 100 + 100, // 从视口下方开始
       delay: Math.random() * 15,
       duration: Math.random() * 10 + 10,
     }));
@@ -36,6 +38,7 @@ export default function Particles() {
             width: `${particle.size}px`,
             height: `${particle.size}px`,
             left: `${particle.left}%`,
+            top: `${particle.top}%`,
             animationDelay: `${particle.delay}s`,
             animationDuration: `${particle.duration}s`,
           }}
@@ -73,7 +76,7 @@ export default function Particles() {
             opacity: 1;
           }
           100% {
-            transform: translateY(-100vh) rotate(720deg);
+            transform: translateY(-120vh) rotate(720deg);
             opacity: 0;
           }
         }

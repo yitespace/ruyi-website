@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import EmojiPicker from '@/components/Messages/EmojiPicker';
 import Navigation from '@/components/Navigation';
 import Particles from '@/components/Particles';
@@ -14,6 +15,7 @@ interface Message {
 }
 
 export default function MessagesPage() {
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [name, setName] = useState('');
   const [content, setContent] = useState('');
@@ -190,6 +192,12 @@ export default function MessagesPage() {
           )}
         </div>
       </div>
+
+      {/* 返回首页按钮 */}
+      <button className="home-btn" onClick={() => router.push('/')}>
+        <span>🏠</span>
+        <span>返回首页</span>
+      </button>
 
       {showEmoji && (
         <EmojiPicker onSelect={handleEmojiSelect} onClose={() => setShowEmoji(false)} />
@@ -433,6 +441,43 @@ export default function MessagesPage() {
 
           .page-title {
             font-size: 32px;
+          }
+        }
+
+        .home-btn {
+          position: fixed;
+          bottom: 100px;
+          right: 20px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 24px;
+          background: rgba(255, 255, 255, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 25px;
+          color: #fff;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+          z-index: 90;
+        }
+
+        .home-btn:hover {
+          background: rgba(255, 255, 255, 0.25);
+        }
+
+        .home-btn:active {
+          transform: scale(0.95);
+        }
+
+        @media (min-width: 768px) {
+          .home-btn {
+            right: 40px;
+            bottom: 120px;
           }
         }
       `}</style>

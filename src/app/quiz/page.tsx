@@ -159,6 +159,12 @@ export default function QuizPage() {
               : '下一题'}
           </button>
         </div>
+
+        {/* 返回首页按钮 */}
+        <button className="home-btn" onClick={() => router.push('/')}>
+          <span>🏠</span>
+          <span>返回首页</span>
+        </button>
       </div>
 
       <style jsx>{`
@@ -299,6 +305,32 @@ export default function QuizPage() {
         }
 
         .quiz-btn:not(:disabled):active {
+          transform: scale(0.95);
+        }
+
+        .home-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 30px;
+          padding: 12px 24px;
+          background: rgba(255, 255, 255, 0.15);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 25px;
+          color: #fff;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        .home-btn:hover {
+          background: rgba(255, 255, 255, 0.25);
+        }
+
+        .home-btn:active {
           transform: scale(0.95);
         }
 

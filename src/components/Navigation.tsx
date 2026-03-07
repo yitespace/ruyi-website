@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Particles from './Particles';
 
 interface NavItem {
@@ -17,6 +18,7 @@ const navItems: NavItem[] = [
 ];
 
 export default function Navigation() {
+  const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -70,6 +72,10 @@ export default function Navigation() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const goHome = () => {
+    router.push('/');
+  };
+
   const toggleMenu = () => {
     setMobileNavOpen(!mobileNavOpen);
     document.body.style.overflow = !mobileNavOpen ? 'hidden' : '';
@@ -92,7 +98,11 @@ export default function Navigation() {
 
       {/* 移动端侧边导航 */}
       <nav className={`mobile-nav ${mobileNavOpen ? 'active' : ''}`}>
+        <button className="menu-close-btn" onClick={toggleMenu}>✕</button>
         <ul>
+          <li>
+            <a onClick={goHome}>🏠 首页</a>
+          </li>
           {navItems.map((item) => (
             <li key={item.id}>
               <a onClick={() => scrollToSection(item.id)}>
@@ -178,6 +188,29 @@ export default function Navigation() {
           padding: 80px 30px;
           transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-close-btn {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          width: 40px;
+          height: 40px;
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          border-radius: 50%;
+          color: #fff;
+          font-size: 20px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+        }
+
+        .menu-close-btn:active {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(0.9);
         }
 
         .mobile-nav.active {

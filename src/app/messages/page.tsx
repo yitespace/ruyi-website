@@ -194,9 +194,12 @@ export default function MessagesPage() {
       </div>
 
       {/* 返回首页按钮 */}
-      <button className="home-btn" onClick={() => router.push('/')}>
-        <span>🏠</span>
-        <span>返回首页</span>
+      <button
+        className="back-to-home"
+        onClick={() => router.push('/')}
+        aria-label="返回首页"
+      >
+        🏠
       </button>
 
       {showEmoji && (
@@ -444,40 +447,40 @@ export default function MessagesPage() {
           }
         }
 
-        .home-btn {
+        .back-to-home {
           position: fixed;
-          bottom: 100px;
+          bottom: 90px;
           right: 20px;
+          width: 50px;
+          height: 50px;
+          background: linear-gradient(45deg, #ff6b9d, #f093fb);
+          border-radius: 50%;
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 12px 24px;
-          background: rgba(255, 255, 255, 0.15);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          border-radius: 25px;
+          justify-content: center;
+          font-size: 24px;
           color: #fff;
-          font-size: 14px;
-          font-weight: 500;
+          box-shadow: 0 5px 20px rgba(255, 107, 157, 0.5);
           cursor: pointer;
           transition: all 0.3s ease;
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-          z-index: 90;
+          z-index: 99;
+          border: none;
         }
 
-        .home-btn:hover {
-          background: rgba(255, 255, 255, 0.25);
-        }
-
-        .home-btn:active {
-          transform: scale(0.95);
+        .back-to-home:active {
+          transform: scale(0.9);
         }
 
         @media (min-width: 768px) {
-          .home-btn {
+          .back-to-home {
             right: 40px;
             bottom: 120px;
+          }
+        }
+
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+          .back-to-home {
+            bottom: calc(90px + env(safe-area-inset-bottom));
           }
         }
       `}</style>

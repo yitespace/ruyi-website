@@ -40,10 +40,19 @@ export default function AdminMessagesPage() {
   const fetchMessages = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/messages');
-      const data = await res.json();
-      if (data.success) {
-        setApprovedMessages(data.messages || []);
+      const [approvedRes, pendingRes] = await Promise.all([
+        fetch('/api/messages'),
+        fetch('/api/messages/pending'),
+      ]);
+
+      const approvedData = await approvedRes.json();
+      const pendingData = await pendingRes.json();
+
+      if (approvedData.success) {
+        setApprovedMessages(approvedData.messages || []);
+      }
+      if (pendingData.success) {
+        setPendingMessages(pendingData.messages || []);
       }
     } catch (error) {
       console.error('Failed to fetch messages:', error);
@@ -262,84 +271,126 @@ export default function AdminMessagesPage() {
 
       <style jsx>{`
         .admin-messages {
-          padding: 20px;
-          padding-bottom: 100px;
+          padding: 20px 16px;
+          padding-bottom: calc(84px + env(safe-area-inset-bottom));
         }
 
         .page-header {
-          margin-bottom: 20px;
-          padding-top: 10px;
+          margin-bottom: 24px;
+          padding: 16px 20px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .page-header h1 {
-          font-size: 24px;
+          font-size: 22px;
+          font-weight: 700;
           color: #fff;
           margin: 0;
+          background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: -0.5px;
         }
 
         .tabs {
           display: flex;
           gap: 10px;
           margin-bottom: 20px;
-          background: rgba(255, 255, 255, 0.08);
-          padding: 5px;
-          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.04);
+          padding: 6px;
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .tab {
           flex: 1;
           padding: 12px 20px;
           background: transparent;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.45);
           border: none;
-          border-radius: 8px;
+          border-radius: 12px;
           font-size: 14px;
-          font-weight: 500;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 6px;
+          gap: 8px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .tab::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .tab.active::before {
+          opacity: 1;
         }
 
         .tab.active {
-          background: rgba(255, 255, 255, 0.15);
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.15));
           color: #fff;
+          box-shadow: 0 2px 12px rgba(102, 126, 234, 0.2);
         }
 
         .badge {
-          background: linear-gradient(45deg, #ff6b9d, #f093fb);
+          background: linear-gradient(135deg, #ff6b9d, #f093fb);
           color: #fff;
           font-size: 11px;
-          padding: 2px 6px;
+          font-weight: 700;
+          padding: 2px 8px;
           border-radius: 10px;
-          min-width: 18px;
+          min-width: 20px;
           text-align: center;
+          box-shadow: 0 2px 8px rgba(255, 107, 157, 0.4);
         }
 
         .loading {
           text-align: center;
-          padding: 60px 20px;
-          color: rgba(255, 255, 255, 0.7);
+          padding: 100px 20px;
+          color: rgba(255, 255, 255, 0.4);
+        }
+
+        .loading p {
+          font-size: 14px;
+          margin-top: 16px;
         }
 
         .empty-state {
           text-align: center;
-          padding: 60px 20px;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 16px;
+          padding: 100px 20px;
+          background: rgba(255, 255, 255, 0.03);
+          border-radius: 24px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .empty-icon {
-          font-size: 48px;
+          font-size: 64px;
           display: block;
-          margin-bottom: 15px;
+          margin-bottom: 20px;
+          opacity: 0.5;
+          filter: grayscale(0.5);
         }
 
         .empty-state p {
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.4);
           margin: 0;
+          font-size: 15px;
         }
 
         .messages-list {
@@ -349,36 +400,44 @@ export default function AdminMessagesPage() {
         }
 
         .message-card {
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-radius: 16px;
-          padding: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 18px;
+          padding: 18px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .message-card:active {
+          transform: scale(0.985);
+          background: rgba(255, 255, 255, 0.04);
         }
 
         .message-card.approved {
-          border-color: rgba(76, 175, 80, 0.3);
+          border-color: rgba(76, 175, 80, 0.15);
+          background: rgba(76, 175, 80, 0.03);
         }
 
         .message-header {
           display: flex;
-          gap: 12px;
+          gap: 14px;
           align-items: center;
-          margin-bottom: 12px;
+          margin-bottom: 14px;
         }
 
         .message-avatar {
-          width: 42px;
-          height: 42px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
-          background: linear-gradient(45deg, #ff6b9d, #f093fb);
+          background: linear-gradient(135deg, #ff6b9d, #f093fb);
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 18px;
+          font-size: 20px;
           overflow: hidden;
           flex-shrink: 0;
+          box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
         }
 
         .message-avatar img {
@@ -394,49 +453,58 @@ export default function AdminMessagesPage() {
 
         .message-name {
           font-weight: 600;
-          color: #fff;
+          color: rgba(255, 255, 255, 0.9);
           font-size: 15px;
           margin-bottom: 4px;
         }
 
         .message-meta {
           font-size: 12px;
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.4);
           display: flex;
-          gap: 10px;
+          gap: 8px;
           align-items: center;
         }
 
         .ip-tag {
-          font-family: monospace;
-          background: rgba(255, 255, 255, 0.08);
-          padding: 2px 6px;
-          border-radius: 4px;
+          font-family: 'SF Mono', 'Monaco', monospace;
+          background: rgba(255, 255, 255, 0.06);
+          padding: 3px 8px;
+          border-radius: 6px;
           font-size: 11px;
+          color: rgba(255, 255, 255, 0.5);
+          letter-spacing: 0.3px;
         }
 
         .message-content {
-          color: rgba(255, 255, 255, 0.9);
-          line-height: 1.6;
-          margin-bottom: 15px;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 1.7;
+          margin-bottom: 16px;
           word-wrap: break-word;
           font-size: 14px;
+          padding: 14px 16px;
+          background: rgba(255, 255, 255, 0.03);
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .message-actions {
           display: flex;
-          gap: 8px;
+          gap: 10px;
           flex-wrap: wrap;
         }
 
         .message-actions button {
-          padding: 8px 14px;
+          padding: 10px 16px;
           border: none;
-          border-radius: 8px;
+          border-radius: 10px;
           font-size: 13px;
-          font-weight: 500;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          align-items: center;
+          gap: 6px;
         }
 
         .message-actions button:disabled {
@@ -445,24 +513,45 @@ export default function AdminMessagesPage() {
         }
 
         .btn-approve {
-          background: linear-gradient(45deg, #4caf50, #8bc34a);
+          background: linear-gradient(135deg, #22c55e, #16a34a);
           color: #fff;
+          box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-approve:hover:not(:disabled) {
+          box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4);
         }
 
         .btn-reject {
-          background: linear-gradient(45deg, #f44336, #e91e63);
+          background: linear-gradient(135deg, #ef4444, #dc2626);
           color: #fff;
+          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-reject:hover:not(:disabled) {
+          box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
         }
 
         .btn-ban {
-          background: rgba(255, 255, 255, 0.15);
-          color: #fff;
+          background: rgba(255, 255, 255, 0.08);
+          color: rgba(255, 255, 255, 0.7);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-ban:hover:not(:disabled) {
+          background: rgba(239, 68, 68, 0.15);
+          border-color: rgba(239, 68, 68, 0.3);
+          color: #ef4444;
         }
 
         .btn-delete {
-          background: rgba(244, 67, 54, 0.2);
-          color: #fff;
-          border: 1px solid rgba(244, 67, 54, 0.3);
+          background: rgba(239, 68, 68, 0.1);
+          color: #f87171;
+          border: 1px solid rgba(239, 68, 68, 0.15);
+        }
+
+        .btn-delete:hover:not(:disabled) {
+          background: rgba(239, 68, 68, 0.15);
         }
 
         .message-actions button:active:not(:disabled) {

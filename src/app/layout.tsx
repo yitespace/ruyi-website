@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -6,13 +6,19 @@ export const metadata: Metadata = {
   description: '汝意的个人主页 - 一个热爱生活、充满好奇心的女孩分享生活的小天地',
   keywords: ['汝意', '个人主页', '博客', '生活分享'],
   authors: [{ name: 'ruyi' }],
-  viewport: 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no',
-  themeColor: '#667eea',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: '汝意的世界',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#667eea',
 };
 
 export default function RootLayout({

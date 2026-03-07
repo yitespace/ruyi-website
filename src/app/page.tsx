@@ -71,6 +71,25 @@ export default function Home() {
     };
   }, [menuOpen]);
 
+  // 记录访客
+  useEffect(() => {
+    const trackVisitor = async () => {
+      try {
+        await fetch('/api/visitors/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userAgent: navigator.userAgent,
+          }),
+        });
+      } catch (error) {
+        console.error('Failed to track visitor:', error);
+      }
+    };
+
+    trackVisitor();
+  }, []);
+
   return (
     <>
       {/* 加载动画 */}

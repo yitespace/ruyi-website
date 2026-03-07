@@ -223,115 +223,146 @@ export default function AdminContentPage() {
 
       <style jsx>{`
         .admin-content {
-          padding: 20px;
-          padding-bottom: 100px;
+          padding: 16px;
+          padding-bottom: calc(80px + env(safe-area-inset-bottom));
         }
 
         .page-header {
           margin-bottom: 20px;
-          padding-top: 10px;
+          padding-top: 8px;
         }
 
         .page-header h1 {
-          font-size: 24px;
+          font-size: 22px;
+          font-weight: 600;
           color: #fff;
           margin: 0;
+          background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .tabs {
           display: flex;
           gap: 8px;
           margin-bottom: 20px;
-          background: rgba(255, 255, 255, 0.08);
-          padding: 5px;
-          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.06);
+          padding: 6px;
+          border-radius: 14px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .tabs::-webkit-scrollbar {
+          display: none;
         }
 
         .tab {
           flex: 1;
-          padding: 12px 16px;
+          min-width: fit-content;
+          padding: 11px 18px;
           background: transparent;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.5);
           border: none;
-          border-radius: 8px;
+          border-radius: 10px;
           font-size: 14px;
           font-weight: 500;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           white-space: nowrap;
+          position: relative;
         }
 
         .tab.active {
-          background: rgba(255, 255, 255, 0.15);
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.25));
           color: #fff;
+          font-weight: 600;
+        }
+
+        .tab:active:not(.active) {
+          background: rgba(255, 255, 255, 0.08);
         }
 
         .tab-content {
-          background: rgba(255, 255, 255, 0.06);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-radius: 16px;
-          padding: 20px;
-          margin-bottom: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 18px;
+          padding: 18px;
+          margin-bottom: 18px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .form-section {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 18px;
         }
 
         .form-group {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 9px;
         }
 
         .form-group label {
           font-size: 13px;
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.55);
           font-weight: 500;
+          padding-left: 2px;
         }
 
         .form-input,
         .form-textarea {
-          padding: 12px 14px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 10px;
+          padding: 13px 16px;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
           color: #fff;
           font-size: 14px;
           font-family: inherit;
           outline: none;
-          transition: all 0.2s ease;
+          transition: all 0.25s ease;
         }
 
         .form-input::placeholder,
         .form-textarea::placeholder {
-          color: rgba(255, 255, 255, 0.4);
+          color: rgba(255, 255, 255, 0.35);
         }
 
         .form-input:focus,
         .form-textarea:focus {
-          border-color: rgba(255, 255, 255, 0.3);
-          background: rgba(255, 255, 255, 0.12);
+          border-color: rgba(102, 126, 234, 0.5);
+          background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-textarea {
+          resize: vertical;
+          min-height: 80px;
         }
 
         .card-editor {
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 14px;
           padding: 16px;
           margin-bottom: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.03);
+          transition: all 0.25s ease;
+        }
+
+        .card-editor:active {
+          background: rgba(255, 255, 255, 0.06);
         }
 
         .card-header {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.6);
-          margin-bottom: 12px;
-          font-weight: 500;
+          color: rgba(255, 255, 255, 0.5);
+          margin-bottom: 14px;
+          font-weight: 600;
+          padding-left: 4px;
         }
 
         .hobby-input-wrapper {
@@ -344,15 +375,17 @@ export default function AdminContentPage() {
         }
 
         .add-btn {
-          padding: 12px 20px;
-          background: linear-gradient(45deg, #667eea, #764ba2);
+          padding: 13px 22px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
           color: #fff;
           border: none;
-          border-radius: 10px;
+          border-radius: 12px;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+          white-space: nowrap;
         }
 
         .add-btn:active {
@@ -362,52 +395,58 @@ export default function AdminContentPage() {
         .hobbies-list {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          margin-top: 16px;
+          gap: 8px;
+          margin-top: 14px;
         }
 
         .hobby-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 14px;
+          padding: 13px 15px;
+          background: rgba(255, 255, 255, 0.04);
+          border-radius: 11px;
+          border: 1px solid rgba(255, 255, 255, 0.03);
+          transition: all 0.2s ease;
+        }
+
+        .hobby-item:active {
           background: rgba(255, 255, 255, 0.06);
-          border-radius: 10px;
-          border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .hobby-item span {
           font-size: 14px;
-          color: rgba(255, 255, 255, 0.9);
+          color: rgba(255, 255, 255, 0.85);
         }
 
         .hobby-item button {
-          padding: 6px 10px;
-          background: rgba(244, 67, 54, 0.2);
-          color: #ff6b6b;
-          border: 1px solid rgba(244, 67, 54, 0.3);
-          border-radius: 6px;
+          padding: 7px 12px;
+          background: rgba(244, 67, 54, 0.15);
+          color: #ef5350;
+          border: 1px solid rgba(244, 67, 54, 0.2);
+          border-radius: 8px;
           cursor: pointer;
           font-size: 13px;
-          transition: all 0.2s ease;
+          font-weight: 500;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .hobby-item button:active {
           transform: scale(0.95);
-          background: rgba(244, 67, 54, 0.3);
+          background: rgba(244, 67, 54, 0.2);
         }
 
         .save-btn {
           width: 100%;
           padding: 16px;
-          background: linear-gradient(45deg, #4caf50, #8bc34a);
+          background: linear-gradient(135deg, #4caf50, #8bc34a);
           color: #fff;
           border: none;
           border-radius: 14px;
           font-size: 16px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
         }
 
@@ -417,7 +456,7 @@ export default function AdminContentPage() {
         }
 
         .save-btn:active:not(:disabled) {
-          transform: scale(0.98);
+          transform: scale(0.97);
         }
       `}</style>
     </div>

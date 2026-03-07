@@ -13,7 +13,20 @@ export default function AdminSettingsPage() {
 
   useEffect(() => {
     checkAuth();
+    fetchBannedIps();
   }, []);
+
+  const fetchBannedIps = async () => {
+    try {
+      const res = await fetch('/api/messages/ip');
+      const data = await res.json();
+      if (data.success) {
+        setBannedIps(data.ips || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch banned IPs:', error);
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -46,6 +59,7 @@ export default function AdminSettingsPage() {
       if (data.success) {
         alert('IP 已封禁');
         setNewIp('');
+        fetchBannedIps();
       } else {
         alert(data.error || '操作失败');
       }
@@ -70,7 +84,7 @@ export default function AdminSettingsPage() {
 
       if (data.success) {
         alert('IP 已解封');
-        setBannedIps((prev) => prev.filter((i) => i !== ip));
+        fetchBannedIps();
       } else {
         alert(data.error || '操作失败');
       }
@@ -183,36 +197,51 @@ export default function AdminSettingsPage() {
 
       <style jsx>{`
         .admin-settings {
-          padding: 20px;
-          padding-bottom: 100px;
+          padding: 20px 16px;
+          padding-bottom: calc(84px + env(safe-area-inset-bottom));
         }
 
         .page-header {
-          margin-bottom: 20px;
-          padding-top: 10px;
+          margin-bottom: 24px;
+          padding: 16px 20px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .page-header h1 {
-          font-size: 24px;
+          font-size: 22px;
+          font-weight: 700;
           color: #fff;
           margin: 0;
+          background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: -0.5px;
         }
 
         .settings-section {
-          background: rgba(255, 255, 255, 0.06);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 20px;
           padding: 20px;
           margin-bottom: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .section-title {
           font-size: 16px;
-          color: rgba(255, 255, 255, 0.9);
-          margin-bottom: 16px;
+          color: rgba(255, 255, 255, 0.85);
+          margin-bottom: 18px;
           font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
 
         .ip-form {
@@ -223,29 +252,37 @@ export default function AdminSettingsPage() {
 
         .ip-form .form-input {
           flex: 1;
-          padding: 12px 14px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 10px;
+          padding: 14px 16px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 12px;
           color: #fff;
           font-size: 14px;
           outline: none;
+          transition: all 0.25s ease;
+        }
+
+        .ip-form .form-input::placeholder {
+          color: rgba(255, 255, 255, 0.3);
         }
 
         .ip-form .form-input:focus {
-          border-color: rgba(255, 255, 255, 0.3);
+          border-color: rgba(102, 126, 234, 0.4);
+          background: rgba(255, 255, 255, 0.06);
         }
 
         .ban-btn {
-          padding: 12px 20px;
-          background: linear-gradient(45deg, #f44336, #e91e63);
+          padding: 14px 22px;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
           color: #fff;
           border: none;
-          border-radius: 10px;
+          border-radius: 12px;
           font-size: 14px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+          white-space: nowrap;
         }
 
         .ban-btn:disabled {
@@ -258,91 +295,111 @@ export default function AdminSettingsPage() {
         }
 
         .banned-list {
-          margin-top: 16px;
+          margin-top: 14px;
         }
 
         .list-title {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.7);
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.45);
           margin-bottom: 12px;
+          font-weight: 500;
         }
 
         .banned-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 12px 14px;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
+          padding: 14px 16px;
+          background: rgba(255, 255, 255, 0.03);
+          border-radius: 12px;
           margin-bottom: 8px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+          transition: all 0.2s ease;
+        }
+
+        .banned-item:active {
+          background: rgba(255, 255, 255, 0.04);
         }
 
         .ip-text {
-          font-family: monospace;
+          font-family: 'SF Mono', 'Monaco', monospace;
           font-size: 13px;
-          color: rgba(255, 255, 255, 0.8);
+          color: rgba(255, 255, 255, 0.7);
+          letter-spacing: 0.3px;
         }
 
         .unban-btn {
-          padding: 6px 12px;
-          background: rgba(76, 175, 80, 0.2);
-          color: #81c784;
-          border: 1px solid rgba(76, 175, 80, 0.3);
-          border-radius: 6px;
+          padding: 7px 14px;
+          background: rgba(34, 197, 94, 0.15);
+          color: #4ade80;
+          border: 1px solid rgba(34, 197, 94, 0.25);
+          border-radius: 8px;
           font-size: 13px;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .unban-btn:active {
           transform: scale(0.95);
+          background: rgba(34, 197, 94, 0.2);
         }
 
         .empty-state {
-          padding: 20px;
+          padding: 28px;
           text-align: center;
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.4);
           font-size: 14px;
+          background: rgba(255, 255, 255, 0.03);
+          border-radius: 14px;
         }
 
         .form-group {
-          margin-bottom: 16px;
+          margin-bottom: 18px;
         }
 
         .form-group label {
           display: block;
           font-size: 13px;
-          color: rgba(255, 255, 255, 0.7);
-          margin-bottom: 8px;
+          color: rgba(255, 255, 255, 0.5);
+          margin-bottom: 10px;
+          font-weight: 500;
         }
 
         .form-group .form-input {
           width: 100%;
-          padding: 12px 14px;
-          background: rgba(255, 255, 255, 0.08);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 10px;
+          padding: 14px 16px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 12px;
           color: #fff;
           font-size: 14px;
           outline: none;
           box-sizing: border-box;
+          transition: all 0.25s ease;
+        }
+
+        .form-group .form-input::placeholder {
+          color: rgba(255, 255, 255, 0.3);
         }
 
         .form-group .form-input:focus {
-          border-color: rgba(255, 255, 255, 0.3);
+          border-color: rgba(102, 126, 234, 0.4);
+          background: rgba(255, 255, 255, 0.06);
         }
 
         .change-password-btn {
           width: 100%;
-          padding: 14px;
-          background: linear-gradient(45deg, #667eea, #764ba2);
+          padding: 16px;
+          background: linear-gradient(135deg, #667eea, #764ba2);
           color: #fff;
           border: none;
-          border-radius: 10px;
+          border-radius: 13px;
           font-size: 15px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .change-password-btn:disabled {
@@ -350,10 +407,18 @@ export default function AdminSettingsPage() {
           cursor: not-allowed;
         }
 
+        .change-password-btn:active:not(:disabled) {
+          transform: scale(0.97);
+        }
+
         .about-info {
-          color: rgba(255, 255, 255, 0.6);
-          line-height: 1.8;
+          color: rgba(255, 255, 255, 0.45);
+          line-height: 2;
           font-size: 14px;
+        }
+
+        .about-info p {
+          margin: 0;
         }
       `}</style>
     </div>

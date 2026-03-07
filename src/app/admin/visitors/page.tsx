@@ -141,161 +141,229 @@ export default function AdminVisitorsPage() {
 
       <style jsx>{`
         .admin-visitors {
-          padding: 20px;
-          padding-bottom: 100px;
+          padding: 20px 16px;
+          padding-bottom: calc(84px + env(safe-area-inset-bottom));
         }
 
         .page-header {
-          margin-bottom: 20px;
-          padding-top: 10px;
+          margin-bottom: 24px;
+          padding: 16px 20px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .page-header h1 {
-          font-size: 24px;
+          font-size: 22px;
+          font-weight: 700;
           color: #fff;
           margin: 0;
+          background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          letter-spacing: -0.5px;
         }
 
         .stats-row {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 12px;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
         }
 
         .stat-card {
-          background: rgba(255, 255, 255, 0.12);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-radius: 16px;
-          padding: 20px;
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 18px;
+          padding: 22px 16px;
           text-align: center;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .stat-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #667eea, transparent);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+          opacity: 1;
+        }
+
+        .stat-card:active {
+          transform: scale(0.97);
+          background: rgba(255, 255, 255, 0.04);
         }
 
         .stat-value {
           font-size: 32px;
           font-weight: 700;
-          background: linear-gradient(45deg, #667eea, #f093fb);
+          background: linear-gradient(135deg, #667eea, #f093fb);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+          letter-spacing: -0.5px;
+          margin-bottom: 6px;
         }
 
         .stat-label {
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.6);
-          margin-top: 5px;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.45);
+          font-weight: 500;
         }
 
         .loading {
           text-align: center;
-          padding: 60px 20px;
-          color: rgba(255, 255, 255, 0.7);
+          padding: 100px 20px;
+          color: rgba(255, 255, 255, 0.4);
+        }
+
+        .loading p {
+          font-size: 14px;
+          margin-top: 16px;
         }
 
         .empty-state {
           text-align: center;
-          padding: 60px 20px;
-          background: rgba(255, 255, 255, 0.05);
-          border-radius: 16px;
+          padding: 100px 20px;
+          background: rgba(255, 255, 255, 0.03);
+          border-radius: 24px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .empty-icon {
-          font-size: 48px;
+          font-size: 64px;
           display: block;
-          margin-bottom: 15px;
+          margin-bottom: 20px;
+          opacity: 0.5;
+          filter: grayscale(0.5);
         }
 
         .empty-state p {
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.4);
           margin: 0;
+          font-size: 15px;
         }
 
         .visitors-list {
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 10px;
         }
 
         .visitor-card {
-          background: rgba(255, 255, 255, 0.08);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border-radius: 16px;
-          padding: 16px;
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 18px;
+          padding: 18px;
+          border: 1px solid rgba(255, 255, 255, 0.04);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .visitor-card:active {
+          transform: scale(0.985);
+          background: rgba(255, 255, 255, 0.04);
         }
 
         .visitor-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
         }
 
         .visitor-time {
           font-size: 13px;
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.45);
+          font-weight: 500;
         }
 
         .score-badge {
           font-size: 12px;
-          font-weight: 600;
-          padding: 4px 10px;
-          border-radius: 12px;
+          font-weight: 700;
+          padding: 5px 12px;
+          border-radius: 10px;
+          font-variant-numeric: tabular-nums;
         }
 
         .score-badge.high {
-          background: rgba(76, 175, 80, 0.25);
-          color: #81c784;
+          background: rgba(34, 197, 94, 0.15);
+          color: #22c55e;
+          border: 1px solid rgba(34, 197, 94, 0.25);
         }
 
         .score-badge.medium {
-          background: rgba(255, 193, 7, 0.25);
-          color: #ffd54f;
+          background: rgba(251, 191, 36, 0.15);
+          color: #fbbf24;
+          border: 1px solid rgba(251, 191, 36, 0.25);
         }
 
         .score-badge.low {
-          background: rgba(244, 67, 54, 0.25);
-          color: #e57373;
+          background: rgba(239, 68, 68, 0.15);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.25);
         }
 
         .visitor-info {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 12px;
         }
 
         .visitor-row {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 8px 0;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          padding: 12px 14px;
+          background: rgba(255, 255, 255, 0.03);
+          border-radius: 12px;
+          transition: all 0.2s ease;
+        }
+
+        .visitor-row:hover {
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        .label {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.45);
+          font-weight: 500;
+        }
+
+        .value {
+          font-size: 14px;
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 500;
+        }
+
+        .value.ip {
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+          font-size: 12px;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 6px 12px;
+          border-radius: 8px;
+          color: rgba(255, 255, 255, 0.6);
+          letter-spacing: 0.3px;
         }
 
         .visitor-row:last-child {
           border-bottom: none;
           padding-bottom: 0;
-        }
-
-        .label {
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.5);
-        }
-
-        .value {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.9);
-        }
-
-        .value.ip {
-          font-family: monospace;
-          font-size: 12px;
-          background: rgba(255, 255, 255, 0.08);
-          padding: 3px 8px;
-          border-radius: 4px;
         }
       `}</style>
     </div>

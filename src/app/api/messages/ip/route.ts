@@ -2,6 +2,32 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/kv';
 import { getSession } from '@/lib/auth';
 
+// GET - 获取已封禁 IP 列表
+export async function GET() {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { success: false, error: '请先登录' },
+        { status: 401 }
+      );
+    }
+
+    const ips = await db.smembers<string>('banned:ips');
+
+    return NextResponse.json({
+      success: true,
+      ips: ips || [],
+    });
+  } catch (error) {
+    console.error('Failed to fetch banned IPs:', error);
+    return NextResponse.json({
+      success: true,
+      ips: [],
+    });
+  }
+}
+
 // POST - 封禁/解封 IP
 export async function POST(request: Request) {
   try {

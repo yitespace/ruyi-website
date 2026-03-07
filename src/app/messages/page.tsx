@@ -144,7 +144,7 @@ export default function MessagesPage() {
                   target.style.height = `${Math.min(target.scrollHeight, 200)}px`;
                 }}
                 maxLength={500}
-                rows={1}
+                rows={3}
               />
               <button
                 type="button"
@@ -290,6 +290,7 @@ export default function MessagesPage() {
           font-family: inherit;
           transition: all 0.3s ease;
           max-height: 200px;
+          min-height: 80px;
         }
 
         .form-textarea::placeholder {
